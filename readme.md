@@ -1,5 +1,4 @@
 # NEXTLab Car Detection Project
-*********
 ## Introduce
 본 레포지토리는 NEXTLab과의 코드스테이츠 기업협업 프로젝트를 위해 만들어진 레포지토리입니다. 
 
