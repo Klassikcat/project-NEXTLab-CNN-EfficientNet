@@ -1,12 +1,19 @@
-import tensorflow as tf
-import matplotlib.pyplot as plt
 import argparse
 import platform
-_DEFAULT_TFRECORD_DIR = '' 
+
+import matplotlib.pyplot as plt
+import tensorflow as tf
+
+_DEFAULT_TFRECORD_DIR = 'tfrecord' 
 # : Example DIR = 'data/tfrecord/001-744.tfrecord'
 
 class TFRecordLoader:
     def __init__(self, tfrecord_path):
+        """[summary]
+
+        Args:
+            tfrecord_path ([str of path or list of paths]): []
+        """
         self.tfrecord_path = tfrecord_path
 
     def get_tfrecord(self, path) : 
@@ -27,8 +34,8 @@ class TFRecordLoader:
         tfrecord = self.get_tfrecord(self.tfrecord_path)
         return tfrecord.map(self._parse_image_function)
 
-class TFRecordViewer:
-    def __init__(self, n_image):
+class TFRecordViewer(TFRecordLoader):
+    def __init__(self, n_image=int):
         self.n_image = n_image
 
         if platform.system() == 'Darwin': #Mac
@@ -36,15 +43,15 @@ class TFRecordViewer:
         elif platform.system() == 'Windows': #Window
             plt.rc('font', family='Malgun Gothic') 
         elif platform.system() == 'Linux': #Linux or Colab
-            plt.rc('font', family='Malgun Gothic') 
+            plt.rc('font', family='NanumBarunGothic')
         plt.rcParams['axes.unicode_minus'] = False #resolve minus symbol breaks when using Hangul font
     
     def _tensor_decode(self, features):
         path  = features['image/path'].numpy().decode()
         brand = features['image/class/brand'].numpy().decode()
         color = features['image/class/color'].numpy().decode()
-        model = features['image/class/brand'].numpy().decode()
-        year  = features['image/class/model'].numpy().decode()
+        model = features['image/class/model'].numpy().decode()
+        year  = features['image/class/year'].numpy().decode()
         image = features['image/encoded']
         image = tf.io.decode_jpeg(image)
         image = tf.keras.preprocessing.image.array_to_img(image)
@@ -57,21 +64,20 @@ class TFRecordViewer:
         for features in self.parsed_tfrecord.take(self.n_image):          
             path, brand, color, color, model, year, image = \
             self._tensor_decode(features)          
-            print(path)
-            print(brand)
-            print(color)
-            print(model)
-            print(year)
-            plt.text(180, 0, 'path : '+ path)
-            plt.text(180, 10, 'brand : '+ brand)
-            plt.text(180, 20, 'color : '+ color)
-            plt.text(180, 30, 'model : '+ model)
-            plt.text(180, 40, 'year : '+ year)
+            #plt.text(250, 0, 'path : '+ path)
+            plt.text(250, 20, 'brand : '+ brand)
+            plt.text(250, 40, 'color : '+ color)
+            plt.text(250, 60, 'model : '+ model)
+            plt.text(250, 80, 'year : '+ year)
 
             # plt.text(10.0, 1, 'brand : '+ brand)
             
             plt.imshow(image)
             plt.show()
+
+    def resize_img(self, tensor):
+        self.tensor = tensor
+        
 
 def parse_args():
     parser = argparse.ArgumentParser()
