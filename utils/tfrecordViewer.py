@@ -8,7 +8,7 @@ _DEFAULT_TFRECORD_DIR = ''
 class TFRecordLoader:
     def __init__(self, tfrecord_path):
         self.tfrecord_path = tfrecord_path
-        
+
     def get_tfrecord(self, path) : 
         return tf.data.TFRecordDataset(path, compression_type = 'GZIP')
     
