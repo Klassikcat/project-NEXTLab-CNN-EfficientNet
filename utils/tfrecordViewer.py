@@ -2,13 +2,13 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import argparse
 import platform
-
-_DEFAULT_TFRECORD_DIR = 'data/train/tfrecord/001-744.tfrecord'
-# : Example DIR = 'data/train/tfrecord/001-744.tfrecord'
+_DEFAULT_TFRECORD_DIR = '' 
+# : Example DIR = 'data/tfrecord/001-744.tfrecord'
 
 class TFRecordLoader:
     def __init__(self, tfrecord_path):
         self.tfrecord_path = tfrecord_path
+
     def get_tfrecord(self, path) : 
         return tf.data.TFRecordDataset(path, compression_type = 'GZIP')
     
