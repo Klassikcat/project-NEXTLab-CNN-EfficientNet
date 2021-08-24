@@ -10,3 +10,8 @@ YOLO-v4
   data
   yolov4-416
   Yolo_v4.ipynb
+  
+    
+[issue]
+1. 주피터 노트북으로 main문(object detection부분)을 실행후 또 다시 main문을 호출하게 되면 objectdetection이 실행되지 않습니다.
+2. 이때 load model 블럭을 호출하고 다시 main문을 실행하게 되면 정상적으로 작동합니다.
