@@ -4,6 +4,7 @@ from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.applications import EfficientNetB0, EfficientNetB1
 
+
 class SEBlock(keras.Model):
     def __init__(self, input_size, r=4):
         super(SEBlock, self).__init__(trainable=True)
@@ -13,12 +14,13 @@ class SEBlock(keras.Model):
             layers.Dense(input_size),
             layers.Activation(activation='sigmoid')
         ])
-        self.squeeze = layers.AveragePooling2D(pool_size=input_size, strides=input_size, padding="same")
+        self.squeeze = layers.GlobalAveragePooling2D(keepdims=True, data_format='channels_last')
 
     def call(self, x):
         x = self.squeeze(x)
         x = self.excitation(x)
         return x
+
 
 class MBConv(keras.Model):
     __expand = 6
@@ -53,6 +55,7 @@ class MBConv(keras.Model):
         x_shortcut = x
         x_residual = self.residual(x)
         x_se = self.se.call(x_residual)
+        print(f"residual: {tf.shape(x_residual)}\nse: {tf.shape(x_se)}")
 
         x = x_se * x_residual
         x = self.project(x)
@@ -70,14 +73,14 @@ class SepConv(keras.Model):
         self.p = tf.convert_to_tensor(p, dtype=float) if (input == output) else tf.convert_to_tensor(1, dtype=float)
 
         self.residual = keras.Sequential([
-            layers.Conv2D(filters=input * MBConv.__expand, kernel_size=kernel_size,
+            layers.Conv2D(filters=input * SepConv.__expand, kernel_size=kernel_size,
                           strides=1, padding='same', use_bias=False),
             layers.BatchNormalization(momentum=0.99, epsilon=1e-3),
             layers.Activation(activation='swish')
             ])
-        elf.se = SEBlock(input * self.__expand, se_scale)
+        self.se = SEBlock(input * self.__expand, se_scale)
         self.project = keras.Sequential([
-            layers.Conv2D(output, kernel_size=1, strides=1, padding='valid', use_bias=False),
+            layers.Conv2D(input * SepConv.__expand, kernel_size=1, strides=1, padding='valid', use_bias=False),
             layers.BatchNormalization(momentum=0.99, epsilon=1e-3)
         ])
         self.shortcut = (strides == 1 and (input == output))
@@ -89,6 +92,7 @@ class SepConv(keras.Model):
         x_shortcut = x
         x_residual = self.residual(x)
         x_se = self.se.call(x_residual)
+        print(f"residual: {tf.shape(x_residual)}\nse: {tf.shape(x_se)}")
 
         x = x_se * x_residual
         x = self.project(x)
@@ -97,11 +101,15 @@ class SepConv(keras.Model):
             x = x_shortcut + x
         return x
 
+    class EfficientNet(keras.Model):
+        def __init__(self):
+            return None
+
 
 if __name__ == '__main__':
     x = tf.random.normal([3, 24, 24, 16])
     print(f"original shape:{x.shape[3]}")
-    model = MBConv(16, 16, strides=1, kernel_size=6, p=1)
+    model = SepConv(16, 16, strides=1, kernel_size=3, p=1)
     output = model(x)
     print(f"shape: {tf.shape(output)}")
     print(output[1, 0, 0, 0])
