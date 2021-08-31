@@ -1,4 +1,5 @@
 import argparse
+from functools import partial
 import platform
 
 import matplotlib.pyplot as plt
@@ -10,17 +11,11 @@ _DEFAULT_TFRECORD_DIR = 'tfrecord'
 class TFRecordLoader:
     def __init__(self, tfrecord_path):
         """[summary]
-
         Args:
             tfrecord_path ([str of path or list of paths]): []
         """
         self.tfrecord_path = tfrecord_path
-
-    def get_tfrecord(self, path) : 
-        return tf.data.TFRecordDataset(path, compression_type = 'GZIP')
-    
-    def _parse_image_function(self, example_proto):
-        feature = {
+        self.feature = {
             'image/path': tf.io.FixedLenFeature((), tf.string),
             'image/encoded': tf.io.FixedLenFeature((), tf.string),
             'image/class/brand': tf.io.FixedLenFeature((), tf.string),
@@ -28,11 +23,17 @@ class TFRecordLoader:
             'image/class/model': tf.io.FixedLenFeature((), tf.string),
             'image/class/year': tf.io.FixedLenFeature((), tf.string)
         }
-        return tf.io.parse_single_example(example_proto, feature)
+
+    def get_tfrecord(self):
+        return tf.data.TFRecordDataset(self.tfrecord_path, compression_type='GZIP')
+
+    def _parse_image_function(self, example_proto):
+        return tf.io.parse_single_example(example_proto, self.feature)
 
     def load(self):
-        tfrecord = self.get_tfrecord(self.tfrecord_path)
+        tfrecord = self.get_tfrecord()
         return tfrecord.map(self._parse_image_function)
+
 
 class TFRecordViewer(TFRecordLoader):
     def __init__(self, n_image=int):
@@ -45,7 +46,7 @@ class TFRecordViewer(TFRecordLoader):
         elif platform.system() == 'Linux': #Linux or Colab
             plt.rc('font', family='NanumBarunGothic')
         plt.rcParams['axes.unicode_minus'] = False #resolve minus symbol breaks when using Hangul font
-    
+
     def _tensor_decode(self, features):
         path  = features['image/path'].numpy().decode()
         brand = features['image/class/brand'].numpy().decode()
@@ -55,7 +56,6 @@ class TFRecordViewer(TFRecordLoader):
         image = features['image/encoded']
         image = tf.io.decode_jpeg(image)
         image = tf.keras.preprocessing.image.array_to_img(image)
-
         return path, brand, color, color, model, year, image
 
     def show(self, parsed_tfrecord):

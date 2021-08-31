@@ -105,12 +105,21 @@ class SepConv(keras.Model):
         def __init__(self):
             return None
 
+class EfficienNet(keras.Model):
+    def __init__(self, fine_tuning=True, weights=str, activation='swish', class_num=int):
+        super(EfficienNet, self).__init__(trainable=True)
+        if fine_tuning == True:
+            include_top = False
+        else:
+            include_top = True
+        self.model = EfficientNetB0(include_top=include_top, weights=weights,
+                                    classes=class_num, classifier_activation=activation)
+
+    def call(self, data):
+        self.model.compile(optimizer='adam', loss='categorical_crossentropy')
+        self.model.fit(data)
+        self.model.predict(data)
 
 if __name__ == '__main__':
-    x = tf.random.normal([3, 24, 24, 16])
-    print(f"original shape:{x.shape[3]}")
-    model = SepConv(16, 16, strides=1, kernel_size=3, p=1)
-    output = model(x)
-    print(f"shape: {tf.shape(output)}")
-    print(output[1, 0, 0, 0])
-
+    net = EfficienNet(fine_tuning=True, weights='imagenet',class_num=10)
+    print(net.model.summary())
