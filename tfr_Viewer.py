@@ -25,8 +25,7 @@ def show_tfrecord(tfrecord_path, n_image):
     count =0
     for path in paths :
         parsed_tfrecord = utils.get_tfrecord(path)
-        #for features in parsed_tfrecord.take(n_image) :
-        for features in parsed_tfrecord :
+        for features in parsed_tfrecord.take(n_image) :
             path, brand, model, year, image, class_name, label = \
             utils.tensor_decode(features)
             if count == 32100:
