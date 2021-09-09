@@ -110,7 +110,7 @@ class SepConv(keras.Model):
             return None
 
 
-class Model(TrainDataLoader):
+class Model:
     def __init__(self, model_name='model', b=str, add_block_list=None,
                  weights='imagenet', width=224, height=224, dim=3,
                  activation='softmax', none_trainable_layers=0, classes=int,
@@ -210,7 +210,7 @@ class Model(TrainDataLoader):
 
         return base
 
-    def call(self, pooling_layers='maxpooling'):
+    def call(self, pooling_layers='average_pooling', pretrained=True):
         model_pre = self.set_untrainable_layers()
 
         model = tf.keras.Sequential([])
@@ -222,7 +222,7 @@ class Model(TrainDataLoader):
             model.add(tf.keras.layers.GlobalAveragePooling2D())
         model.add(tf.keras.layers.Dropout(self.dropout_rate))
         model.add(tf.keras.layers.Dense(self.classes, activation=self.activation))
+        if pretrained == True:
+            model.load_weights('./saved_weights/saved_model.pb')
         return model
-if __name__ == '__main__':
-    net = EfficienNet(fine_tuning=True, weights='imagenet',class_num=10)
-    print(net.model.summary())
+
