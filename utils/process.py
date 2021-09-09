@@ -1,7 +1,5 @@
-import math, re, os
 import tensorflow as tf
-import numpy as np
-from utils.tfrecordViewer import TFRecordLoader
+from utils.tfrecord.tfrecordViewer import TFRecordLoader
 
 class ReadTFRecord():
     def __init__(self, tfrecord_path, label, batch_size=int, image_size=int, channels=3):

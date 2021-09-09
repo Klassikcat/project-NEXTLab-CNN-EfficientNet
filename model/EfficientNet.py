@@ -1,9 +1,14 @@
+from core.config import batch_size, dropout_rate, SEED
+
 import tensorflow as tf
 import tensorflow_probability as tfp
-from tensorflow import keras
 from tensorflow.keras import layers
-from tensorflow.keras.applications import EfficientNetB0, EfficientNetB1
+from tensorflow import keras
+from tensorflow.python.keras.callbacks import EarlyStopping
+from tensorflow.keras.optimizers import Adam, SGD
 
+from EfficientNet.efficientnet.model import EfficientNetB0, EfficientNetB1, EfficientNetB2
+from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, EarlyStopping
 
 class SEBlock(keras.Model):
     def __init__(self, input_size, r=4):
@@ -20,7 +25,6 @@ class SEBlock(keras.Model):
         x = self.squeeze(x)
         x = self.excitation(x)
         return x
-
 
 class MBConv(keras.Model):
     __expand = 6
@@ -105,21 +109,120 @@ class SepConv(keras.Model):
         def __init__(self):
             return None
 
-class EfficienNet(keras.Model):
-    def __init__(self, fine_tuning=True, weights=str, activation='swish', class_num=int):
-        super(EfficienNet, self).__init__(trainable=True)
-        if fine_tuning == True:
-            include_top = False
+
+class Model(TrainDataLoader):
+    def __init__(self, model_name='model', b=str, add_block_list=None,
+                 weights='imagenet', width=224, height=224, dim=3,
+                 activation='softmax', none_trainable_layers=0, classes=int,
+                 dropout_rate=0.5, unlock_layer_list=['multiply_16'],
+                 epochs=60, batch_size=128, smoothing_rate=0, monitor='val_loss'):
+        """
+        b = EfficientnetB(b), int.
+        model = layers you want to add. list, classes.
+        none_trainable_layers: select none-trainable layers. int.
+        classes = number of classes
+        """
+        self.b = b
+        self.weights = weights
+
+        self.width = width
+        self.height = height
+        self.dim = dim
+
+        self.shape = (width, height, dim)
+
+        self.epochs = epochs
+        self.batch_size = batch_size
+        self.monitor = monitor
+
+        self.none_trainable_layers = none_trainable_layers
+        self.add_block_list = add_block_list
+        self.classes = classes
+        self.dropout_rate = dropout_rate
+        self.unlock_layer_list = unlock_layer_list
+
+        self.activation = activation
+
+        self.model = {'b0': EfficientNetB0(include_top=False, weights='imagenet', input_shape=self.shape,
+                                           classes=self.classes),
+                      'b1': EfficientNetB1(include_top=False, weights='imagenet', input_shape=self.shape,
+                                           classes=self.classes),
+                      'b2': EfficientNetB2(include_top=False, weights='imagenet', input_shape=self.shape,
+                                           classes=self.classes)
+                      }
+
+        self.optimizer = {'adam': Adam(learning_rate=0.001, name='Adam'),
+                          "SGD": tf.keras.optimizers.SGD(learning_rate=0.001,
+                                                         momentum=0.0,
+                                                         nesterov=False,
+                                                         name="SGD")
+                          }
+
+        self.loss = {'Top5Acc': tf.keras.metrics.TopKCategoricalAccuracy(k=3),
+                     'CategoricalCrossentropy': tf.keras.losses.CategoricalCrossentropy(label_smoothing=smoothing_rate)
+                     }
+
+        self.model_name = f'checkpoint-epoch-{epochs}-batch-{batch_size}-trial-001.h5'
+
+        self.checkpoint = ModelCheckpoint(model_name,
+                                          monitor=monitor,
+                                          verbose=1,
+                                          save_best_only=True,
+                                          mode='auto'
+                                          )
+
+        self.reduceLR = ReduceLROnPlateau(monitor=monitor,
+                                          factor=0.5,
+                                          patience=2
+                                          )
+
+        self.earlystopping = EarlyStopping(monitor=monitor,
+                                           patience=5,
+                                           )
+
+    def set_untrainable_layers(self):
+        model = self.model[self.b]
+
+        if self.none_trainable_layers == 'all':
+            model.trainable = False
+
         else:
-            include_top = True
-        self.model = EfficientNetB0(include_top=include_top, weights=weights,
-                                    classes=class_num, classifier_activation=activation)
+            for layer in model.layers[:self.none_trainable_layers]:
+                layer.trainable = False
 
-    def call(self, data):
-        self.model.compile(optimizer='adam', loss='categorical_crossentropy')
-        self.model.fit(data)
-        self.model.predict(data)
+        for layer in model.layers[-20:]:
+            if not isinstance(layer, tf.keras.layers.BatchNormalization):
+                layer.trainable = True
 
+        for layer in model.layers:
+            if layer.name in self.unlock_layer_list:
+                set_trainable = True
+
+        return model
+
+    def add_model(self, model, block_list):
+        base = model
+
+        if block_list != None:
+            assert type(block_list) == list
+            for block in block_list:
+                base.add(block)
+
+        return base
+
+    def call(self, pooling_layers='maxpooling'):
+        model_pre = self.set_untrainable_layers()
+
+        model = tf.keras.Sequential([])
+        model.add(tf.keras.layers.Input(shape=self.shape))
+        model.add(self.add_model(model_pre, self.add_block_list))
+        if pooling_layers == 'maxpooling':
+            model.add(tf.keras.layers.GlobalMaxPooling2D())
+        else:
+            model.add(tf.keras.layers.GlobalAveragePooling2D())
+        model.add(tf.keras.layers.Dropout(self.dropout_rate))
+        model.add(tf.keras.layers.Dense(self.classes, activation=self.activation))
+        return model
 if __name__ == '__main__':
     net = EfficienNet(fine_tuning=True, weights='imagenet',class_num=10)
     print(net.model.summary())
