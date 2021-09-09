@@ -5,7 +5,7 @@ from tensorflow import keras
 from tensorflow.python.keras.callbacks import EarlyStopping
 from tensorflow.keras.optimizers import Adam
 
-from EfficientNet.efficientnet.model import EfficientNetB0, EfficientNetB1, EfficientNetB2
+from .model import EfficientNetB0, EfficientNetB1, EfficientNetB2
 from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, EarlyStopping
 
 class SEBlock(keras.Model):
