@@ -1,5 +1,5 @@
-from core import utils
-from core.config import cfg
+from EfficientNet_codestates.core import utils
+from EfficientNet_codestates.core.config import cfg
 
 from imgaug import augmenters as iaa
 from argparse import RawTextHelpFormatter
@@ -32,7 +32,7 @@ def main(args):
     df_classes = df_classes.T.rename_axis('class_name').reset_index()
     print("num of class", len(df_classes))
     ##Aunmentaion을 진행합니다.
-    utils.augmentaion(df_classes, seq, args.n_aug , args.b_limit)
+    utils.augmentaion(df_classes, seq, args.n_aug, args.b_limit)
 #python launcher_augument.py --n_aug 100
 if __name__ == '__main__':
 

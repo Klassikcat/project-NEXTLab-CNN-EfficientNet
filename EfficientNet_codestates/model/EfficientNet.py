@@ -1,11 +1,9 @@
-from core.config import batch_size, dropout_rate, SEED
-
 import tensorflow as tf
 import tensorflow_probability as tfp
 from tensorflow.keras import layers
 from tensorflow import keras
 from tensorflow.python.keras.callbacks import EarlyStopping
-from tensorflow.keras.optimizers import Adam, SGD
+from tensorflow.keras.optimizers import Adam
 
 from EfficientNet.efficientnet.model import EfficientNetB0, EfficientNetB1, EfficientNetB2
 from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, EarlyStopping

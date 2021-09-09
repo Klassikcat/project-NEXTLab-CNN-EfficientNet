@@ -1,5 +1,5 @@
 import tensorflow as tf
-from utils.tfrecord.tfrecordViewer import TFRecordLoader
+from EfficientNet_codestates.utils.tfrecord.tfrecordViewer import TFRecordLoader
 
 class ReadTFRecord():
     def __init__(self, tfrecord_path, label, batch_size=int, image_size=int, channels=3):

@@ -1,5 +1,4 @@
-from core import utils
-from core.config import cfg
+from EfficientNet_codestates.core import utils
 from argparse import RawTextHelpFormatter
 
 import argparse

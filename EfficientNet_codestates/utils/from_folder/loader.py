@@ -1,5 +1,5 @@
 import random
-from core.config import batch_size, SEED
+from EfficientNet_codestates.core.config import batch_size, SEED
 
 import pandas as pd
 from tqdm.notebook import tqdm

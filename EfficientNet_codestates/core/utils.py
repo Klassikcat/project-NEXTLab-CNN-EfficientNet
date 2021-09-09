@@ -1,4 +1,4 @@
-from core.config import cfg
+from EfficientNet_codestates.core.config import cfg
 from tqdm import tqdm
 
 import os

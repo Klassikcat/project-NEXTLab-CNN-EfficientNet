@@ -10,7 +10,7 @@ import pandas as pd
 import tensorflow as tf
 
 
-from core.config import _DEFAULT_DATA_PATH, _DEFAULT_LABEL_PATH, _DEFAULT_OUTPUT_DIR, _DEFAULT_N_SHARDS, SEED
+from EfficientNet_codestates.core.config import _DEFAULT_DATA_PATH, _DEFAULT_LABEL_PATH, _DEFAULT_OUTPUT_DIR, SEED
 
 def _float_feature(value):
     return tf.train.Feature(float_list=tf.train.FloatList(value=[value]))
