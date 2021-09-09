@@ -1,12 +1,6 @@
 import pandas as pd
-import numpy as np
-from matplotlib import pyplot as plt
-
-from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, EarlyStopping
 import matplotlib.pyplot as plt
 from tensorflow.keras.preprocessing import image
-from tensorflow import keras
-from tensorflow import keras
 from skimage.transform import resize
 from PIL import Image
 import cv2

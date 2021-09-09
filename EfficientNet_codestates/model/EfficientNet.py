@@ -208,7 +208,7 @@ class Model:
 
         return base
 
-    def call(self, pooling_layers='average_pooling', pretrained=True):
+    def call(self, pooling_layers='average_pooling', pretrained=False, path_weights=None):
         model_pre = self.set_untrainable_layers()
 
         model = tf.keras.Sequential([])
@@ -221,6 +221,6 @@ class Model:
         model.add(tf.keras.layers.Dropout(self.dropout_rate))
         model.add(tf.keras.layers.Dense(self.classes, activation=self.activation))
         if pretrained == True:
-            model.load_weights('./saved_weights/saved_model.pb')
+            model.load_weights(path_weights)
         return model
 
