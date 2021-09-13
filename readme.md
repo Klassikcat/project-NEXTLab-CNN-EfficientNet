@@ -6,20 +6,22 @@
 ## Main Contributers
 - Jeongtae Shin(<a href="https://github.com/Klassikcat">@Klassikcat</a>): Project Management, Model build, Engineering
 - Jaewoong Lee(<a href="https://github.com/colin19950703">@colin19950703</a>): Augmentation, model build, Enigeering
-- HongGwun Kim(<a href="https://github.com/ghdrbs0302">@ghdrbs0302</a>): Data Inspection, Test data Labeling, Engineering
+- Hongkyun Kim(<a href="https://github.com/ghdrbs0302">@ghdrbs0302</a>): Data Inspection, Test data Labeling, Engineering
 
 ## Installation
-``!pip install -U git+https://github.com/Klassikcat/project-NEXTLab-CNN-EfficientNet``
+````shell
+!pip install -U git+https://github.com/Klassikcat/project-NEXTLab-CNN-EfficientNet
+````
 
 ## Structure
-````
+````Python
 project-NEXTLab
 ┖ core
   ┖ config.py               # Tensorflow Configuration
   ┖ utils.py
 ┖ model
   ┖ EfficientNet.py         # Model block and builder
-  ┖ initializers.py         # from EfficientNetv2
+  ┖ initializers.py         # from EfficientNetv2 (https://arxiv.org/abs/2104.00298)
   ┖ layer.py                # from EfficietnNetv2
   ┖ model.py                # from EfficientNetv2
   ┖ params.py               # from EfficientNetv2
@@ -65,3 +67,10 @@ readme.md
 - valid: 0.9717
 
 <img src="./image/valacc.png">
+
+## Further Work
+[ ] Increase valid/test accuracy by making Ensemble model
+
+[ ] Label Smoothing
+
+[ ] Fix all false label
