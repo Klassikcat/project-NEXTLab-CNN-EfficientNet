@@ -76,7 +76,9 @@ mainly consists with 2010~2018 cars
 
 <img src="./image/aug.png">
 
-use these augmentations taking the possible road situations into account.
+- use these augmentations taking the possible road situations into account.
+- Drop the class with less than 30 pieces of data in order to avoid data leakage
+- randomly pick 300 data. if the class has less than 30 data, proceed Data Augmentation for equal distribution of data
 
 ## Model Structure
 <img src="./image/model.png"></a>
