@@ -41,6 +41,9 @@ setup.py                    # installer
 readme.md
 ````
 
+## Objective
+- Making EfficientNetv2 application that distinguish 322 cars by using photos captured by traffic camera
+- Traffic enforcement, Parking lot management.
 
 ## Data
 ### Train/Validatation Data
@@ -51,6 +54,29 @@ readme.md
 ### Test Data
 - Road Camera dataset from NEXTLab: https://www.nextlab.ai/
 - 5016 images belonging to 80 classes
+
+### Data Distribution
+<img src="./image/pieplot.png">
+
+approximately 82% of data is korean cars(hyundai, KIA)
+
+<img src="./image/dis2.png">
+
+approximately 75% of data is korean cars(sonata, etc...)
+
+<img src="./image/dist3.png">
+
+51% sedan, 28.8% SUV, 10% Hatchback, 9% van
+
+<img src="./image/dist4.png">
+
+mainly consists with 2010~2018 cars
+
+### Data Augmentation
+
+<img src="./image/aug.png">
+
+use these augmentations taking the possible road situations into account.
 
 ## Model Structure
 <img src="./image/model.png"></a>
