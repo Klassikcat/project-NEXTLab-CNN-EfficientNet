@@ -48,8 +48,7 @@ readme.md
 ## Data
 ### Train/Validatation Data
 - Uses modified "자동차 차종/연식/번호판 인식용 영상" from AIHub: <a href="https://aihub.or.kr/aidata/27727"> https://aihub.or.kr/aidata/27727 </a>
-- Only uses 322 classes in "세단", "SUB", "해치백", "승합"
-- deliberately select 300 images per class  
+- Uses 522 classes in "세단", "SUB", "해치백", "승합"
 
 ### Test Data
 - Road Camera dataset from NEXTLab: https://www.nextlab.ai/
