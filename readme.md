@@ -40,6 +40,10 @@ project-NEXTLab
 setup.py                    # installer
 readme.md
 ````
+## Stack
+<img alt="Python" src ="https://img.shields.io/badge/Python-3776AB.svg?&style=for-the-badge&logo=Python&logoColor=white"/>
+<img alt="TensorFlow" src ="https://img.shields.io/badge/TensorFlow-FF6F00.svg?&style=for-the-badge&logo=TensorFlow&logoColor=white"/>
+<img alt="sklearn" src ="https://img.shields.io/badge/skikit-learn-F7931E.svg?&style=for-the-badge&logo=scikit-learn&logoColor=white"/>
 
 ## Objective
 - Making EfficientNetv2 application that distinguish 322 cars by using photos captured by traffic camera
