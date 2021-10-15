@@ -13,6 +13,9 @@
 !pip install -U git+https://github.com/Klassikcat/project-NEXTLab-CNN-EfficientNet
 ````
 
+## pre-trained Weights
+https://drive.google.com/file/d/1UyVnR5Pi7NvzD3LPnkllGEyn8afMi5jF/view?usp=sharing
+
 ## Structure
 ````Python
 project-NEXTLab
